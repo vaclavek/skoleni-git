@@ -1,4 +1,7 @@
 # GIT - Ondřej Václavek
+HAVIT s.r.o., software architect
+
+vaclavek@havit.cz
 
 - Založil 2005 Linus Torvalds pro vývoj linuxového jádra	
 - [Open-source](https://github.com/git/git)
