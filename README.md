@@ -11,6 +11,7 @@
 - Každý soubor uložen jen jednou ve formě snapshotu
 - Soubory jsou uložené binárně, což redukuje velikost repositáře a přenos dat
 - Změny se ukládají jako snapshoty
+    - Komprimované pomocí zlib
 - Všechny změny se provádí nejdřív lokálně "offline"
 - Pro každou změnu se spočítá hash, změny jsou uložené ve stromové struktuře přes reference na hashe
 - 4 "pracovní prostory:
@@ -39,7 +40,10 @@
 - Commit
     - Zpráva
 	- Informace o autorovi
-	- Unikátní reference (SHA-1 hash)
+	- Unikátní reference (SHA-1 hash, 160 bitů)
+
+            echo "a" | git hash-object --stdin
+            echo "b" | git hash-object --stdin
 	- Parent commit (SHA-1 hash)
     - Čas commitu, změněné obsahy souborů
     - Identifikace - hash, branch, tag
@@ -63,11 +67,14 @@
 - [GitKraken](https://www.gitkraken.com/)
 - [Visual Studio](https://visualstudio.microsoft.com/)
 - Tortoise GIT
+- Git BASH - napovídá příkazy
 
-## init
+## inicializace
 Inicializace nového repozitáře
 
-      git init
+      git init # založí nový lokální repozitář
+      git clone <URL> # naklonuje vzdálený repozitář
+      git remote add <shortcut> <URL> # přidá k aktuálnímu repozitáři vzdálený  obraz
 
 ## status
 - nezměněné soubory = working tree clean
@@ -139,6 +146,7 @@ Práce s branchemi:
     git checkout master # přepnutí na brach master
     git branch -m newbranch newbranch2 # přejmenování
     git branch -d newbranch2 # smazání
+    git checkout -b newbranch # založení nové větve a rovnou se do ní přepneme
 
 ## tag
 Označení commitu libovolným tagem
@@ -241,7 +249,10 @@ Zobrazí změny mezi commity / branchemi
 Vytvoří patch soubor z aktuální větve proti fixbranch a uloží jej do souboru
 
     git format-patch fixbranch --stdout > bugfix.patch
-    git am bugfix.patch # použije patch
+    git apply --stat a_file.patch # přehled změněných souborů
+    git apply --check a_file.patch # kontrola chyb
+    git am bugfix.patch # použije patch jako commit
+    git am --keep-cr --signoff < a_file.patch # s autorstvím a řešenými konci řádku různých systémů
 
 ## cherry-pick
 Umožňuje použít jinou změnu v mé branchi. Vytváří nový commit = kopii se jménem aktuálního uživatele
@@ -319,6 +330,24 @@ Promaže staré nedosažitelné commity v repozitáři.
 
 ## hooks
 Skripty, které lze spouštět na základě GIT událostí.
+
+## .gitattributes
+Nastavuje pro jednotlivé cesty
+[Vzor](https://github.com/gitattributes/gitattributes)
+
+    text=auto
+    *.cs text diff=csharp
+    *.bmp binary
+    *.proj text eol=crlf merge=union
+
+## interní struktura 
+- Blob
+- Tree
+- Commit
+- Tag
+
+    git cat-file commit <comitid>
+    git cat-file -p <treeid>
 
 ## cheatsheat
 [PDF cheatsheet](cheatsheet.pdf)
