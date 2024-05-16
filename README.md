@@ -1,16 +1,16 @@
-# Úvod
+# GIT - Ondřej Václavek
 
-- Centralizovaný (CVS, SVN) vs distribuovaný (GIT, Mercurial, Bazaar)
-- ![GIT](https://imgs.xkcd.com/comics/git.png)
 - Založil 2005 Linus Torvalds pro vývoj linuxového jádra	
 - [Open-source](https://github.com/git/git)
 - Cloud-based [Gitlab](https://about.gitlab.com), [Github](https://github.com), [Bitbucket](https://bitbucket.org), [Azure DevOps](https://azure.microsoft.com/cs-cz/products/devops), 
 - On-premise [Gitlab](https://about.gitlab.com/install/), [Gerrit](https://azure.microsoft.com/cs-cz/products/devops), [Gitea](https://about.gitea.com)
+![GIT](https://imgs.xkcd.com/comics/git.png)
 
 ## Principy fungování
+- Distribuovaný (GIT, Mercurial, Bazaar) vs centralizovaný (CVS, SVN)
 - Každý soubor uložen jen jednou ve formě snapshotu
 - Soubory jsou uložené binárně, což redukuje velikost repositáře a přenos dat
-- Změny se ukládají ve formě diffu
+- Změny se ukládají jako snapshoty
 - Všechny změny se provádí nejdřív lokálně "offline"
 - Pro každou změnu se spočítá hash, změny jsou uložené ve stromové struktuře přes reference na hashe
 - 4 "pracovní prostory:
@@ -18,11 +18,12 @@
     - staging - připravené změny (git commit)
     - lokální repository (git push)
     - remote repository (git fetch)
+- Větve se obnovují do stejného adresáře
 
 ## Proč používat GIT?
 - Sledování změn
 - Spolupráce 
-- Větvení
+- Větvení a jednoduché slučování
 - Zpětné vrácení změn
 - Ochrana dat
 - Podpora pro týmy
@@ -30,6 +31,8 @@
 - Flexibilita
 - Rychlost
 - Offline práce
+- Stále živý
+- Rychlý
 
 ## Pojmy
 - Repozitář (repository / repo)
@@ -40,30 +43,39 @@
 	- Parent commit (SHA-1 hash)
     - Čas commitu, změněné obsahy souborů
     - Identifikace - hash, branch, tag
+- Push, pull, fetch
 - Branch (větev)
 - Tag (label)
+- Reference
+    - SHA hash
+    - branch name
+    - tag name
+    - Vlnovka = úroveň
+    - Stříška = pořadí rodiče
 
-## Konfigurace
-    git config --list
-    git config --global user.name "Ondřej Václavek"
-    git config --global user.email vaclavek@havit.cz
-    git config --global core.editor "code --wait"
-    git config --global merge.autoStash true
-    git config --global init.defaultBranch main
-    git config --global alias.co checkout
+![Odkazy](img/last-commit.png)
 
-Aliasy
+## UI nástroje
+- IDE
+- [Sourcetree](https://www.sourcetreeapp.com/)
+- [GitHub Desktop](https://desktop.github.com/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [GitKraken](https://www.gitkraken.com/)
+- [Visual Studio](https://visualstudio.microsoft.com/)
+- Tortoise GIT
 
-    [alias]
-      co = checkout
-      ci = commit
-      st = status
-      br = branch
-      hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
-      type = cat-file -t
-      dump = cat-file -p
+## init
+Inicializace nového repozitáře
 
-## Commit
+      git init
+
+## status
+- nezměněné soubory = working tree clean
+- změněné soubory = Changes not staged for commit
+- soubory ve staging = Changes to be committed
+- nové soubory = Untracked files
+
+## commit
 - jedna změna -> rozdělit na logické části
 - stručný a výstižný název (přítomnný čas)
 - podrobný popis
@@ -74,32 +86,15 @@ Aliasy
       git commit -m "Zpráva" # commit se zprávou
       git commit --amend -m "Přidání změn" # neměňte veřejné commity
 
-## Status
-- nezměněné soubory = working tree clean
-- změněné soubory = Changes not staged for commit
-- soubory ve staging = Changes to be committed
-- nové soubory = Untracked files
-
 ## Interaktivní materiály
 - [Learn branching](https://learngitbranching.js.org/?NODEMO)
 - [Procvičování GITu s online tutoriálem](https://profy.dev/project/github-minesweeper)
-- [Animace příkazů](https://visualizegit.com/)
+- [Vizuální vysvětlení](https://marklodato.github.io/visual-git-guide/index-en.html)
 - [Tutoriál](https://www.atlassian.com/git/glossary#commands)
 
 ## .gitignore
 - [šablona pro různé jazyky](https://github.com/github/gitignore/tree/main)
 - ignorování commitu adresářů nebo souborů
-
-## fetch
-Stáhne změny ze vzdáleného repositáře bez toho, aby se změny aplikovaly do indexu
-
-    git fetch
-
-## pull
-Stáhne fetch ze vždáleného repositáře a aplikuje je do indexu.
-Je ekvivalentní jako git fetch && git merge
-
-    git pull 
 
 ## log
 Pro výpis všech commitů, zobrazení změn v souborech, filtrování historie a zobrazení historie větví
@@ -112,15 +107,6 @@ Pro výpis všech commitů, zobrazení změn v souborech, filtrování historie 
     git log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short --since='7 days ago' # custom formátování
 
 [Dokumentace](https://git-scm.com/docs/git-log)
-
-## reflog
-Log změna všech referencí - záchranná síť, pokud ztratíme commit.
-
-    git reflog # základní příkaz pro zobrazení
-    git reflog show --all
-    git reflog stash # reflog pro stash
-
-![img](img/reflog.png)
 
 ## reset
 Umožňuje vrátit obsah repositáře k určitému commitu. Změny __po daném commitu__ budou odstraněny.
@@ -178,6 +164,8 @@ Typy sloučení:
 - fast-forward merge - novější commity se "napojí" na poslední commit. Nevyžaduje lidský zásah, nevzniknou konflikty. Nelze použít u větví, kde probíhaly změny
 - 3-way merge - sloučení změn z větví, kde v obou probíhaly změny
 
+      git mergetool --tool-help
+
 Při sloučení mohly vzniknout konflikty, pokud došlo k:
 - úpravě stejného řádku souboru
 - mazání nebo přejmenování změněných souborů
@@ -195,6 +183,11 @@ Rebase vs. merge
 - Rebase nesmíme použít, pokud commit jsou již veřejné.
 - Rebase nepoužijeme, pokud nám jde o přesnou historii commitů.
 - Interaktivní rebase "úpravy aktuálního indexu"
+    - Slučování commitů
+    - Rozdělování commitů
+    - Přejmenování commitů
+    - Úprava pořadí
+    - Úprava commitu
 
       git rebase --interactive HEAD~3
 
@@ -230,14 +223,28 @@ Příklad (včetně vytvoření konfliktu)
     git add new.txt # přidáme změněný soubor do gitu
     git commit -m "Merged" # commit
 
+## reflog
+Log změna všech referencí - záchranná síť, pokud ztratíme commit.
+
+    git reflog # základní příkaz pro zobrazení
+    git reflog show --all
+    git reflog stash # reflog pro stash
+
+![img](img/reflog.png)
+
 ## diff
 
 Zobrazí změny mezi commity / branchemi 
 
     git diff newbranch master
 
+Vytvoří patch soubor z aktuální větve proti fixbranch a uloží jej do souboru
+
+    git format-patch fixbranch --stdout > bugfix.patch
+    git am bugfix.patch # použije patch
+
 ## cherry-pick
-Umožňuje použít jinou změnu v mé branchi. Vytváří nový commit = kopii
+Umožňuje použít jinou změnu v mé branchi. Vytváří nový commit = kopii se jménem aktuálního uživatele
 
     git cherry-pick <commit-sha>
 
@@ -258,6 +265,52 @@ Kontrola posledních změn v souboru
 
     git blame file.txt
 
+## Připojení k serveru
+
+      git remote add origin https://gitlab.com/skolenigitk2/SkoleniGit.git
+
+Vygenerování SSH klíčů
+
+      ssh-keygen -t ed25519 -C "<comment>"
+
+## Konfigurace
+    git config --list
+    git config --global user.name "Ondřej Václavek"
+    git config --global user.email vaclavek@havit.cz
+    git config --global core.editor "code --wait"
+    git config --global core.editor "notepad"
+    git config --global merge.autoStash true
+    git config --global init.defaultBranch main
+    git config --global alias.co checkout
+
+Aliasy
+
+    [alias]
+      co = checkout
+      ci = commit
+      st = status
+      br = branch
+      hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+      type = cat-file -t
+      dump = cat-file -p
+
+## fetch
+Stáhne změny ze vzdáleného repositáře bez toho, aby se změny aplikovaly do indexu
+
+    git fetch
+
+## pull
+Stáhne fetch ze vždáleného repositáře a aplikuje je do indexu.
+Je ekvivalentní jako git fetch && git merge
+
+    git pull 
+
+## push
+Odešle připravené změny na server.
+    
+    git push --set-upstream <remote name> <branch>
+    git push --set-upstream origin main
+
 ## prune
 Promaže staré nedosažitelné commity v repozitáři.
 
@@ -266,13 +319,6 @@ Promaže staré nedosažitelné commity v repozitáři.
 
 ## hooks
 Skripty, které lze spouštět na základě GIT událostí.
-
-## Aplikace
-- [GitHub Desktop](https://desktop.github.com/)
-- [Sourcetree](https://www.sourcetreeapp.com/)
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [GitKraken](https://www.gitkraken.com/)
-- [Visual Studio](https://visualstudio.microsoft.com/)
 
 ## cheatsheat
 [PDF cheatsheet](cheatsheet.pdf)
